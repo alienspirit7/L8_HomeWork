@@ -1,0 +1,623 @@
+{
+  "project": {
+    "name": "Manual Linear Algebra Regression Analysis",
+    "version": "1.0",
+    "description": "Development tasks for implementing linear regression using manual linear algebra calculations",
+    "estimated_total_hours": 45,
+    "priority_levels": ["Critical", "High", "Medium", "Low"]
+  },
+  "phases": [
+    {
+      "phase_id": "PHASE_1",
+      "name": "Core Mathematical Implementation",
+      "description": "Implement fundamental linear algebra operations and regression calculations",
+      "estimated_hours": 12,
+      "tasks": [
+        {
+          "task_id": "MATH_001",
+          "title": "Implement Normal Equation Function",
+          "description": "Create manual_linear_regression() function implementing β = (X^T X)^(-1) X^T y",
+          "priority": "Critical",
+          "estimated_hours": 3,
+          "dependencies": [],
+          "deliverables": [
+            "manual_linear_regression() function",
+            "Matrix transpose calculation",
+            "Matrix multiplication using np.dot()",
+            "Matrix inversion with error handling"
+          ],
+          "acceptance_criteria": [
+            "Function calculates coefficients correctly",
+            "Handles intercept term automatically",
+            "Returns coefficients, predictions, and R²",
+            "Matches sklearn results within numerical precision"
+          ]
+        },
+        {
+          "task_id": "MATH_002",
+          "title": "Implement Manual R-squared Calculation",
+          "description": "Calculate R² = 1 - (SS_res / SS_tot) manually using vector operations",
+          "priority": "Critical",
+          "estimated_hours": 2,
+          "dependencies": ["MATH_001"],
+          "deliverables": [
+            "R-squared calculation function",
+            "Residual sum of squares computation",
+            "Total sum of squares computation",
+            "Edge case handling for zero variance"
+          ],
+          "acceptance_criteria": [
+            "R² calculation matches sklearn r2_score",
+            "Handles edge cases gracefully",
+            "Uses only numpy operations",
+            "Returns values between 0 and 1 (or negative for poor fits)"
+          ]
+        },
+        {
+          "task_id": "MATH_003",
+          "title": "Implement Adjusted R-squared Calculation",
+          "description": "Calculate adjusted R² with proper degrees of freedom penalty",
+          "priority": "High",
+          "estimated_hours": 1.5,
+          "dependencies": ["MATH_002"],
+          "deliverables": [
+            "Adjusted R² formula implementation",
+            "Degrees of freedom calculation",
+            "Edge case handling for n-p-1 ≤ 0"
+          ],
+          "acceptance_criteria": [
+            "Adjusted R² properly penalizes additional variables",
+            "Formula: 1 - (1-R²)*(n-1)/(n-p-1)",
+            "Handles small sample sizes",
+            "Validates against statistical theory"
+          ]
+        },
+        {
+          "task_id": "MATH_004",
+          "title": "Add Matrix Operation Error Handling",
+          "description": "Implement fallback mechanisms for singular matrices and numerical instability",
+          "priority": "High",
+          "estimated_hours": 2,
+          "dependencies": ["MATH_001"],
+          "deliverables": [
+            "Singular matrix detection",
+            "Pseudo-inverse fallback implementation",
+            "Numerical stability checks",
+            "Error logging and user warnings"
+          ],
+          "acceptance_criteria": [
+            "Gracefully handles singular X^T X matrices",
+            "Uses np.linalg.pinv() when needed",
+            "Provides informative error messages",
+            "Maintains calculation accuracy"
+          ]
+        },
+        {
+          "task_id": "MATH_005",
+          "title": "Update calculate_model_metrics Function",
+          "description": "Replace sklearn calls with manual linear algebra implementations",
+          "priority": "Critical",
+          "estimated_hours": 3.5,
+          "dependencies": ["MATH_001", "MATH_002", "MATH_003"],
+          "deliverables": [
+            "Updated calculate_model_metrics() function",
+            "Integration with manual regression function",
+            "Batch processing for multiple datasets",
+            "Performance optimization"
+          ],
+          "acceptance_criteria": [
+            "Processes all 20 datasets correctly",
+            "Returns same structure as original",
+            "No sklearn dependencies",
+            "Maintains performance requirements"
+          ]
+        }
+      ]
+    },
+    {
+      "phase_id": "PHASE_2",
+      "name": "Data Generation and Management",
+      "description": "Implement data generation functions and user input handling",
+      "estimated_hours": 8,
+      "tasks": [
+        {
+          "task_id": "DATA_001",
+          "title": "Implement User Input Function",
+          "description": "Create get_sample_size() function with input validation",
+          "priority": "Medium",
+          "estimated_hours": 1,
+          "dependencies": [],
+          "deliverables": [
+            "get_sample_size() function",
+            "Input validation logic",
+            "Error handling for invalid inputs",
+            "User-friendly prompts"
+          ],
+          "acceptance_criteria": [
+            "Accepts positive integer inputs only",
+            "Provides clear error messages",
+            "Loops until valid input received",
+            "Handles keyboard interrupts gracefully"
+          ]
+        },
+        {
+          "task_id": "DATA_002",
+          "title": "Implement Base Data Generation",
+          "description": "Create generate_base_data() function for variables and coefficients",
+          "priority": "High",
+          "estimated_hours": 2,
+          "dependencies": [],
+          "deliverables": [
+            "generate_base_data() function",
+            "50 independent variables generation",
+            "51 coefficients generation (β₀ + 50 βᵢ)",
+            "Reproducible random seed implementation"
+          ],
+          "acceptance_criteria": [
+            "Generates specified number of variables",
+            "Uses np.random.rand() for uniform distribution",
+            "Returns separate beta0 and betas arrays",
+            "Reproducible with fixed seed"
+          ]
+        },
+        {
+          "task_id": "DATA_003",
+          "title": "Implement Noise Range Generation",
+          "description": "Create generate_noise_ranges() function for 20 noise levels",
+          "priority": "Medium",
+          "estimated_hours": 1.5,
+          "dependencies": [],
+          "deliverables": [
+            "generate_noise_ranges() function",
+            "Low noise ranges (0.01-2.0): 7 datasets",
+            "Medium noise ranges (2.0-4.0): 7 datasets",
+            "High noise ranges (4.0-6.0): 6 datasets"
+          ],
+          "acceptance_criteria": [
+            "Generates exactly 20 noise ranges",
+            "Covers specified ranges appropriately",
+            "Shuffles ranges for randomization",
+            "Returns sorted list for analysis"
+          ]
+        },
+        {
+          "task_id": "DATA_004",
+          "title": "Implement Dataset Creation Functions",
+          "description": "Create functions for generating datasets with noise and transformations",
+          "priority": "High",
+          "estimated_hours": 3.5,
+          "dependencies": ["DATA_002", "DATA_003"],
+          "deliverables": [
+            "create_datasets_with_noise() function",
+            "create_expanded_datasets() function",
+            "Noise application logic",
+            "Dataset structure consistency"
+          ],
+          "acceptance_criteria": [
+            "Creates 20 datasets per configuration",
+            "Applies noise consistently",
+            "Maintains true model structure",
+            "Returns standardized dataset format"
+          ]
+        }
+      ]
+    },
+    {
+      "phase_id": "PHASE_3",
+      "name": "Variable Transformation Implementation",
+      "description": "Implement product/square and linear transformation variable generation",
+      "estimated_hours": 10,
+      "tasks": [
+        {
+          "task_id": "TRANSFORM_001",
+          "title": "Implement Product/Square Variable Generation",
+          "description": "Create generate_product_square_variables() function",
+          "priority": "High",
+          "estimated_hours": 4,
+          "dependencies": ["DATA_002"],
+          "deliverables": [
+            "generate_product_square_variables() function",
+            "Product variable generation: (βᵢ×xᵢ) × (βⱼ×xⱼ)",
+            "Square variable generation: (βᵢ×xᵢ)²",
+            "Formula tracking system",
+            "Unique combination validation"
+          ],
+          "acceptance_criteria": [
+            "Generates exactly 20 new variables",
+            "No duplicate combinations",
+            "Tracks transformation formulas",
+            "Uses weighted variables (beta*x)",
+            "Returns variables and formulas separately"
+          ]
+        },
+        {
+          "task_id": "TRANSFORM_002",
+          "title": "Implement Linear Transformation Variables",
+          "description": "Create generate_linear_transform_variables() function",
+          "priority": "High",
+          "estimated_hours": 4,
+          "dependencies": ["DATA_002"],
+          "deliverables": [
+            "generate_linear_transform_variables() function",
+            "Multiplication transformations: factor × (βᵢ×xᵢ)",
+            "Addition/subtraction transformations: (βᵢ×xᵢ) ± offset",
+            "Random factor generation (0.1-3.0)",
+            "Random offset generation (-2.0 to 2.0)"
+          ],
+          "acceptance_criteria": [
+            "Generates exactly 20 new variables",
+            "Uses appropriate random ranges",
+            "Tracks transformation formulas",
+            "No duplicate transformations",
+            "Maintains mathematical consistency"
+          ]
+        },
+        {
+          "task_id": "TRANSFORM_003",
+          "title": "Implement Correlation Analysis",
+          "description": "Create check_correlations() function for variable analysis",
+          "priority": "Medium",
+          "estimated_hours": 2,
+          "dependencies": ["TRANSFORM_001", "TRANSFORM_002"],
+          "deliverables": [
+            "check_correlations() function",
+            "Correlation matrix calculations",
+            "High correlation identification (>0.9)",
+            "Summary statistics reporting"
+          ],
+          "acceptance_criteria": [
+            "Calculates correlations with original variables",
+            "Identifies highly correlated variables",
+            "Reports max, min, mean correlations",
+            "Provides counts of high correlations"
+          ]
+        }
+      ]
+    },
+    {
+      "phase_id": "PHASE_4",
+      "name": "Visualization and Reporting",
+      "description": "Implement plotting functions and result reporting systems",
+      "estimated_hours": 10,
+      "tasks": [
+        {
+          "task_id": "VIZ_001",
+          "title": "Implement Comparison Plot Function",
+          "description": "Create plot_comparison() function for two-way comparisons",
+          "priority": "High",
+          "estimated_hours": 4,
+          "dependencies": ["MATH_005"],
+          "deliverables": [
+            "plot_comparison() function",
+            "Scatter plot implementation",
+            "Color coding system",
+            "Marker differentiation",
+            "Jitter implementation for point separation"
+          ],
+          "acceptance_criteria": [
+            "Creates clear comparison visualizations",
+            "Uses specified color schemes",
+            "Implements proper jittering",
+            "Includes comprehensive legends",
+            "Handles small dataset visibility"
+          ]
+        },
+        {
+          "task_id": "VIZ_002",
+          "title": "Implement Comprehensive Visualization",
+          "description": "Create all-in-one comparison plot for three variable types",
+          "priority": "High",
+          "estimated_hours": 3,
+          "dependencies": ["VIZ_001"],
+          "deliverables": [
+            "Three-way comparison plot",
+            "Enhanced marker sizing",
+            "Optimized color schemes",
+            "Advanced legend positioning",
+            "Grid and background styling"
+          ],
+          "acceptance_criteria": [
+            "Displays all six data series clearly",
+            "Maintains visual hierarchy",
+            "Includes proper spacing and sizing",
+            "Handles overlapping points effectively",
+            "Professional appearance"
+          ]
+        },
+        {
+          "task_id": "REPORT_001",
+          "title": "Implement Table Reporting Functions",
+          "description": "Create print_results_table() function for formatted output",
+          "priority": "Medium",
+          "estimated_hours": 2,
+          "dependencies": ["MATH_005"],
+          "deliverables": [
+            "print_results_table() function",
+            "Formatted table output",
+            "Summary statistics calculations",
+            "Proper column alignment",
+            "Statistical analysis reporting"
+          ],
+          "acceptance_criteria": [
+            "Creates well-formatted tables",
+            "Includes all required metrics",
+            "Calculates summary statistics",
+            "Maintains consistent formatting",
+            "Supports different table types"
+          ]
+        },
+        {
+          "task_id": "REPORT_002",
+          "title": "Implement Analysis and Interpretation",
+          "description": "Add theoretical analysis and result interpretation sections",
+          "priority": "Medium",
+          "estimated_hours": 1,
+          "dependencies": ["MATH_005", "REPORT_001"],
+          "deliverables": [
+            "Theoretical expectations documentation",
+            "Result interpretation logic",
+            "Overfitting detection analysis",
+            "Manual implementation benefits explanation"
+          ],
+          "acceptance_criteria": [
+            "Explains expected behavior clearly",
+            "Identifies overfitting vs redundancy",
+            "Provides educational value",
+            "Supports learning objectives"
+          ]
+        }
+      ]
+    },
+    {
+      "phase_id": "PHASE_5",
+      "name": "Integration and Testing",
+      "description": "Integrate all components and implement comprehensive testing",
+      "estimated_hours": 8,
+      "tasks": [
+        {
+          "task_id": "INTEGRATE_001",
+          "title": "Update Main Function",
+          "description": "Integrate all components into cohesive main() function",
+          "priority": "Critical",
+          "estimated_hours": 3,
+          "dependencies": ["MATH_005", "TRANSFORM_003", "VIZ_002", "REPORT_002"],
+          "deliverables": [
+            "Updated main() function",
+            "Phase-based execution flow",
+            "Progress reporting",
+            "Error handling integration",
+            "Result dictionary structure"
+          ],
+          "acceptance_criteria": [
+            "Executes all phases successfully",
+            "Maintains clear progress reporting",
+            "Handles errors gracefully",
+            "Returns comprehensive results",
+            "Maintains performance requirements"
+          ]
+        },
+        {
+          "task_id": "TEST_001",
+          "title": "Implement Mathematical Validation Tests",
+          "description": "Create tests to validate manual calculations against sklearn",
+          "priority": "High",
+          "estimated_hours": 2,
+          "dependencies": ["MATH_005"],
+          "deliverables": [
+            "Test functions for mathematical accuracy",
+            "Comparison with sklearn results",
+            "Edge case testing",
+            "Numerical precision validation"
+          ],
+          "acceptance_criteria": [
+            "Manual calculations match sklearn within tolerance",
+            "Edge cases handled correctly",
+            "Performance meets requirements",
+            "No mathematical errors detected"
+          ]
+        },
+        {
+          "task_id": "TEST_002",
+          "title": "Implement Functional Testing",
+          "description": "Test all functions individually and in integration",
+          "priority": "Medium",
+          "estimated_hours": 2,
+          "dependencies": ["INTEGRATE_001"],
+          "deliverables": [
+            "Unit tests for all functions",
+            "Integration testing",
+            "Input validation testing",
+            "Output format validation"
+          ],
+          "acceptance_criteria": [
+            "All functions work independently",
+            "Integration flows work correctly",
+            "Input validation prevents errors",
+            "Output formats are consistent"
+          ]
+        },
+        {
+          "task_id": "OPTIMIZE_001",
+          "title": "Performance Optimization",
+          "description": "Optimize code for performance and memory usage",
+          "priority": "Low",
+          "estimated_hours": 1,
+          "dependencies": ["INTEGRATE_001", "TEST_001"],
+          "deliverables": [
+            "Performance profiling results",
+            "Memory usage optimization",
+            "Code optimization for speed",
+            "Scalability improvements"
+          ],
+          "acceptance_criteria": [
+            "Meets performance requirements",
+            "Memory usage is reasonable",
+            "Scales appropriately with data size",
+            "No performance regressions"
+          ]
+        }
+      ]
+    },
+    {
+      "phase_id": "PHASE_6",
+      "name": "Documentation and Cleanup",
+      "description": "Complete documentation, code cleanup, and final validation",
+      "estimated_hours": 7,
+      "tasks": [
+        {
+          "task_id": "DOC_001",
+          "title": "Add Function Documentation",
+          "description": "Add comprehensive docstrings to all functions",
+          "priority": "Medium",
+          "estimated_hours": 2,
+          "dependencies": ["INTEGRATE_001"],
+          "deliverables": [
+            "Docstrings for all functions",
+            "Parameter descriptions",
+            "Return value documentation",
+            "Example usage where appropriate"
+          ],
+          "acceptance_criteria": [
+            "All functions have proper docstrings",
+            "Documentation follows consistent format",
+            "Includes mathematical formulas where relevant",
+            "Provides usage examples"
+          ]
+        },
+        {
+          "task_id": "DOC_002",
+          "title": "Add Code Comments",
+          "description": "Add inline comments explaining mathematical operations",
+          "priority": "Medium",
+          "estimated_hours": 1.5,
+          "dependencies": ["DOC_001"],
+          "deliverables": [
+            "Inline comments for complex operations",
+            "Mathematical formula explanations",
+            "Algorithm step descriptions",
+            "Edge case handling explanations"
+          ],
+          "acceptance_criteria": [
+            "Code is well-commented",
+            "Mathematical operations are explained",
+            "Complex logic is documented",
+            "Educational value is enhanced"
+          ]
+        },
+        {
+          "task_id": "CLEANUP_001",
+          "title": "Code Cleanup and Refactoring",
+          "description": "Clean up code structure and improve readability",
+          "priority": "Low",
+          "estimated_hours": 2,
+          "dependencies": ["DOC_002"],
+          "deliverables": [
+            "Consistent code formatting",
+            "Variable naming improvements",
+            "Function organization",
+            "Import statement optimization"
+          ],
+          "acceptance_criteria": [
+            "Code follows consistent style",
+            "Variable names are descriptive",
+            "Functions are well-organized",
+            "No unused imports or variables"
+          ]
+        },
+        {
+          "task_id": "FINAL_001",
+          "title": "Final Testing and Validation",
+          "description": "Perform final comprehensive testing and validation",
+          "priority": "Critical",
+          "estimated_hours": 1.5,
+          "dependencies": ["CLEANUP_001", "TEST_002"],
+          "deliverables": [
+            "Final test execution",
+            "Complete functionality validation",
+            "Performance verification",
+            "Documentation accuracy check"
+          ],
+          "acceptance_criteria": [
+            "All tests pass successfully",
+            "Functionality meets requirements",
+            "Performance is acceptable",
+            "Documentation is accurate and complete"
+          ]
+        }
+      ]
+    }
+  ],
+  "dependencies_map": {
+    "critical_path": [
+      "MATH_001",
+      "MATH_002", 
+      "MATH_003",
+      "MATH_005",
+      "INTEGRATE_001",
+      "FINAL_001"
+    ],
+    "parallel_tracks": [
+      {
+        "track": "data_generation",
+        "tasks": ["DATA_001", "DATA_002", "DATA_003", "DATA_004"]
+      },
+      {
+        "track": "transformations", 
+        "tasks": ["TRANSFORM_001", "TRANSFORM_002", "TRANSFORM_003"]
+      },
+      {
+        "track": "visualization",
+        "tasks": ["VIZ_001", "VIZ_002", "REPORT_001", "REPORT_002"]
+      }
+    ]
+  },
+  "milestones": [
+    {
+      "milestone": "Core Math Complete",
+      "tasks": ["MATH_001", "MATH_002", "MATH_003", "MATH_004", "MATH_005"],
+      "target_completion": "Week 2"
+    },
+    {
+      "milestone": "Data Pipeline Complete", 
+      "tasks": ["DATA_001", "DATA_002", "DATA_003", "DATA_004"],
+      "target_completion": "Week 2"
+    },
+    {
+      "milestone": "Transformations Complete",
+      "tasks": ["TRANSFORM_001", "TRANSFORM_002", "TRANSFORM_003"],
+      "target_completion": "Week 3"
+    },
+    {
+      "milestone": "Visualization Complete",
+      "tasks": ["VIZ_001", "VIZ_002", "REPORT_001", "REPORT_002"],
+      "target_completion": "Week 4"
+    },
+    {
+      "milestone": "Integration Complete",
+      "tasks": ["INTEGRATE_001", "TEST_001", "TEST_002"],
+      "target_completion": "Week 5"
+    },
+    {
+      "milestone": "Final Delivery",
+      "tasks": ["DOC_001", "DOC_002", "CLEANUP_001", "FINAL_001"],
+      "target_completion": "Week 6"
+    }
+  ],
+  "resource_requirements": {
+    "team_size": "1-2 developers",
+    "skills_required": [
+      "Python programming",
+      "Linear algebra knowledge", 
+      "NumPy proficiency",
+      "Matplotlib experience",
+      "Statistical analysis understanding"
+    ],
+    "tools_needed": [
+      "Python 3.7+",
+      "NumPy",
+      "Matplotlib", 
+      "IDE/Text editor",
+      "Version control system"
+    ]
+  }
+}
